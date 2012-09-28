@@ -67,7 +67,12 @@ describe "Geocoder" do
       expected = "http://maps.googleapis.com/maps/api/geocode/json?address=Ottawa&client=gme-cenx&sensor=false&oe=utf-8&signature=VG4njf1Yo59tnEvwPAMlgOoj4_0="
       Geokit::Geocoders::GoogleGeocoder3.geocode_url('Ottawa',{}).should == expected
     end
-    
+
+    it "should use the language parameter if given" do 
+      Geokit::Geocoders::google = 'abc123'
+      expected = "http://maps.google.com/maps/api/geocode/json?sensor=false&address=Ottawa&language=en"
+      Geokit::Geocoders::GoogleGeocoder3.geocode_url('Ottawa',{:language => 'en'}).should == expected
+    end
   end
 
   describe "sorting results" do
