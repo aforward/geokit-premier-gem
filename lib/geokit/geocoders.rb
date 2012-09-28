@@ -602,16 +602,22 @@ module Geokit
       end
  
       # Determine the Google API url based on the google api key, or based on the client / private key for premier users
+      # Options accepts a :language param which is a two character ISO country code
       def self.geocode_url(address,options = {})
         bias_str = options[:bias] ? construct_bias_string_from_options(options[:bias]) : ''
+        language_str = options[:language] ? construct_language_string_from_options(options[:language]) : ''
         address_str = address.is_a?(GeoLoc) ? address.to_geocodeable_s : address
-
+        
         if !Geokit::Geocoders::google_client_id.nil? && !Geokit::Geocoders::google_premier_secret_key.nil?
-          url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{Geokit::Inflector::url_escape(address_str)}#{bias_str}&client=#{Geokit::Geocoders::google_client_id}&sensor=false&oe=utf-8"
+          url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{Geokit::Inflector::url_escape(address_str)}#{bias_str}&client=#{Geokit::Geocoders::google_client_id}&sensor=false&oe=utf-8#{language_str}"
           Geokit::Geocoders::Geocoder.sign_url(url,Geokit::Geocoders::google_premier_secret_key)
         else
-          "http://maps.google.com/maps/api/geocode/json?sensor=false&address=#{Geokit::Inflector::url_escape(address_str)}#{bias_str}"
+          "http://maps.google.com/maps/api/geocode/json?sensor=false&address=#{Geokit::Inflector::url_escape(address_str)}#{bias_str}#{language_str}"
         end
+      end
+      
+      def self.construct_language_string_from_options(language)
+        "&language=#{language.to_s.downcase}"
       end
  
  
